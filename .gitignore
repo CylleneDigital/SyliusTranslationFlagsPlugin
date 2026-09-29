@@ -1,0 +1,24 @@
+/vendor/
+/var/
+/node_modules/
+/composer.lock
+
+/phpunit.xml
+/compose.override.yml
+
+# Symfony CLI https://symfony.com/doc/current/setup/symfony_server.html#different-php-settings-per-project
+/.php-version
+/php.ini
+
+/tests/TestApplication/.env.local
+/tests/TestApplication/.env.*.local
+/.env.local
+
+.idea/
+
+# Local Cyllene stack (FrankenPHP + Castor), not distributed
+/.docker/
+/castor.php
+/.castor.stub.php
+/CLAUDE.local.md
+/PROCEDURE_PR.md

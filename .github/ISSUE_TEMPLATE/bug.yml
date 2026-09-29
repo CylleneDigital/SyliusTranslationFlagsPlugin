@@ -1,0 +1,73 @@
+name: Report a bug
+description: Unexpected behaviour of the plugin
+labels: ["bug"]
+body:
+    - type: markdown
+      attributes:
+          value: |
+              ⚠️ **A security flaw is not reported here.** See [SECURITY.md](https://github.com/CylleneDigital/SyliusTranslationFlagsPlugin/blob/main/SECURITY.md).
+    - type: input
+      id: plugin-version
+      attributes:
+          label: Plugin version
+      validations:
+          required: true
+    - type: input
+      id: sylius-version
+      attributes:
+          label: Sylius version
+      validations:
+          required: true
+    - type: input
+      id: php-version
+      attributes:
+          label: PHP version
+      validations:
+          required: true
+    - type: dropdown
+      id: screen
+      attributes:
+          label: Screen
+          options:
+              - A translations accordion (product, taxon, promotion... form)
+              - The locales list
+              - Somewhere else
+      validations:
+          required: true
+    - type: input
+      id: admin-locale
+      attributes:
+          label: Locale of the admin user
+          description: "Locale names, and so their capitalization, depend on it - e.g. `fr_FR`."
+      validations:
+          required: true
+    - type: dropdown
+      id: overrides
+      attributes:
+          label: Does your project override one of these templates?
+          description: "Under `templates/bundles/SyliusAdminBundle/` or `templates/bundles/CylleneDigitalSyliusTranslationFlagsPlugin/`: your override wins over the plugin."
+          options:
+              - "No"
+              - "Yes"
+              - I do not know
+      validations:
+          required: true
+    - type: textarea
+      id: expected
+      attributes:
+          label: Expected behaviour
+      validations:
+          required: true
+    - type: textarea
+      id: actual
+      attributes:
+          label: Observed behaviour
+          description: "A screenshot helps a lot."
+      validations:
+          required: true
+    - type: textarea
+      id: steps
+      attributes:
+          label: Steps to reproduce
+      validations:
+          required: true

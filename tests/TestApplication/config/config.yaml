@@ -1,0 +1,19 @@
+imports:
+    - { resource: "services_test.php" }
+
+framework:
+    # For local setups behind a reverse proxy (Symfony CLI, a Docker reverse proxy, ...):
+    # `private_ranges` covers loopback and the Docker networks without trusting any direct
+    # client. NB: do NOT set a TRUSTED_PROXIES env var: the test-application's public/index.php
+    # has legacy code using the removed Request::HEADER_X_FORWARDED_ALL constant that fatals as
+    # soon as it is defined.
+    trusted_proxies: 'private_ranges'
+    trusted_headers: ['x-forwarded-for', 'x-forwarded-host', 'x-forwarded-proto', 'x-forwarded-port', 'x-forwarded-prefix']
+
+# The Sylius admin "notifications" widget calls https://gus.sylius.com/version, which is
+# unreachable in this offline test environment. Disable it for the test application only.
+sylius_twig_hooks:
+    hooks:
+        'sylius_admin.common.component.navbar.items':
+            notifications:
+                enabled: false

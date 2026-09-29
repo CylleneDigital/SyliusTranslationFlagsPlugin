@@ -1,0 +1,114 @@
+name: Build
+
+on:
+    push:
+        branches:
+            - main
+    pull_request: ~
+    release:
+        types: [created]
+    schedule:
+        -
+            cron: "0 1 * * 6" # Run at 1am every Saturday
+    workflow_dispatch: ~
+
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+
+jobs:
+    tests:
+        runs-on: ubuntu-latest
+
+        name: "PHP ${{ matrix.php }}, Sylius ${{ matrix.sylius }}, Symfony ${{ matrix.symfony }}"
+
+        strategy:
+            fail-fast: false
+            matrix:
+                # PHP 8.5: should it break on a third-party dependency rather than on our code,
+                # move the line to `continue-on-error` with a comment - do not drop it from the matrix.
+                php: ["8.3", "8.4", "8.5"]
+                # The 2.2 job resolves to the newest 2.2.x: 2.2.0 through 2.2.5 are excluded
+                # by composer's advisory policy (those CVEs are fixed in 2.2.6).
+                sylius: ["~2.2.0", "~2.3.0"]
+                # Symfony is restricted per Sylius line. Sylius 2.2 caps framework-bundle at 7.4
+                # and doctrine-bundle at 2.x, but not the standalone components: with `^8.0`
+                # allowed, PHP 8.4+ pulls symfony/var-exporter 8, which has no LazyGhost left,
+                # and doctrine-bundle 2.x (native lazy objects off) then fails on boot.
+                # Sylius 2.3 resolves doctrine-bundle 3 (native lazy objects forced), so it
+                # keeps Symfony 8 - reached by the PHP 8.4 and 8.5 jobs, 8.3 being below its floor.
+                include:
+                    -
+                        sylius: "~2.2.0"
+                        symfony: "^7.4"
+                    -
+                        sylius: "~2.3.0"
+                        symfony: "^7.4 || ^8.0"
+
+        env:
+            APP_ENV: test
+
+        steps:
+            -
+                uses: actions/checkout@v7
+
+            -
+                name: Build Sylius Test Application
+                uses: SyliusLabs/BuildTestAppAction@v4
+                with:
+                    # The admin page the tests render includes the Webpack Encore entries:
+                    # without a front-end build they answer 500 without saying why.
+                    e2e_js: "yes"
+                    cache_key: "${{ runner.os }}-php-${{ matrix.php }}-composer-${{ hashFiles('**/composer.json') }}"
+                    cache_restore_key: "${{ runner.os }}-php-${{ matrix.php }}-composer-"
+                    database: "mariadb:11.4"
+                    node_version: "22.x"
+                    php_version: "${{ matrix.php }}"
+                    sylius_version: "${{ matrix.sylius }}"
+                    symfony_version: "${{ matrix.symfony }}"
+                    # The tests create their own schema, locales, admin and taxon.
+                    load_fixtures: "no"
+
+            -
+                name: Validate composer.json
+                run: composer validate --ansi --strict
+
+            # Catches wiring errors before the tests that depend on them: on a plugin, that is
+            # the most frequent class of bug.
+            -
+                name: Validate container
+                run: vendor/bin/console lint:container --env=test
+
+            -
+                name: Run PHPStan
+                run: vendor/bin/phpstan analyse --ansi --no-progress
+
+            -
+                name: Run ECS
+                run: vendor/bin/ecs check --ansi --no-progress-bar
+
+            -
+                name: Lint templates
+                run: vendor/bin/console lint:twig templates --env=test
+
+            -
+                name: Run tests
+                run: vendor/bin/phpunit --colors=always
+
+    # The matrix jobs carry generated names, which change with the matrix itself. This one has a
+    # fixed name and is the only check the branch rule has to require.
+    #
+    # `always()` matters: without it the job is skipped when a matrix job fails, and a skipped
+    # required check counts as satisfied - the rule would let through exactly what it guards
+    # against.
+    build:
+        runs-on: ubuntu-latest
+        name: "Build complete"
+        needs: tests
+        if: always()
+
+        steps:
+            -
+                name: Fail unless every matrix job succeeded
+                run: |
+                    [ "${{ needs.tests.result }}" = "success" ] || exit 1

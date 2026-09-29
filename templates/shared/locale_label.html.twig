@@ -1,0 +1,8 @@
+{%- set country_code = locale_code|sylius_locale_country -%}
+{%- set locale_name = locale_code|sylius_locale_name -%}
+{%- if country_code -%}
+    {# Flagpack icons have a 4:3 viewBox: override the 1em width/height default from ux_icons.yaml.
+       No .flag class: it targets Tabler's CSS background flags. #}
+    {{ ux_icon('flagpack:' ~ country_code|lower, {'class': 'me-2 flex-shrink-0', 'style': 'border-radius: 2px', 'width': '1.34em', 'height': '1em'}) }}
+{%- endif -%}
+{{ locale_name|slice(0, 1)|upper ~ locale_name|slice(1) }}

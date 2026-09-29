@@ -1,0 +1,32 @@
+name: Suggest an improvement
+description: A feature or an enhancement
+labels: ["enhancement"]
+body:
+    - type: textarea
+      id: problem
+      attributes:
+          label: The need
+          description: "What concrete problem are you running into? Describe the situation, not the solution."
+      validations:
+          required: true
+    - type: textarea
+      id: proposal
+      attributes:
+          label: What you suggest
+    - type: dropdown
+      id: scope
+      attributes:
+          label: This concerns
+          options:
+              - A back-office screen showing locale names without a flag
+              - The rendering of the flag or the locale name
+              - The documentation
+              - Something else
+      validations:
+          required: true
+    - type: markdown
+      attributes:
+          value: |
+              Tweaks specific to one shop - a different flag size, a custom locale order, the shop
+              front - stay in the project using the plugin: override the template there, as the
+              README explains.

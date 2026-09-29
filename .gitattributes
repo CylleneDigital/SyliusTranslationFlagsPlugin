@@ -1,0 +1,17 @@
+/.dockerignore export-ignore
+/.editorconfig export-ignore
+/.gitattributes export-ignore
+/.github export-ignore
+/.gitignore export-ignore
+/AGENTS.md export-ignore
+/assets export-ignore
+/CLAUDE.md export-ignore
+/docs export-ignore
+/Makefile export-ignore
+/compose.override.dist.yml export-ignore
+/compose.yml export-ignore
+/ecs.php export-ignore
+/node_modules export-ignore
+/phpstan.neon export-ignore
+/phpunit.xml.dist export-ignore
+/tests export-ignore
