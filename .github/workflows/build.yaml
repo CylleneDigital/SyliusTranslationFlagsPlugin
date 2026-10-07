@@ -1,6 +1,11 @@
 name: Build
 
 on:
+    # No `paths-ignore` on `pull_request`: `Build complete` is a required check, and a required
+    # check that never starts blocks the pull request for good.
+    #
+    # `push` is limited to `main` so that a branch does not run the matrix twice, once for the push
+    # and once for its pull request.
     push:
         branches:
             - main
@@ -9,16 +14,22 @@ on:
         types: [created]
     schedule:
         -
-            cron: "0 1 * * 6" # Run at 1am every Saturday
+            cron: "0 1 * * 6"
     workflow_dispatch: ~
 
 concurrency:
     group: ${{ github.workflow }}-${{ github.ref }}
     cancel-in-progress: true
 
+permissions:
+    contents: read
+
 jobs:
     tests:
-        runs-on: ubuntu-latest
+        # Pinned rather than `ubuntu-latest`: the build action is only known to work on this image.
+        runs-on: ubuntu-24.04
+        # A stuck job would otherwise hold the runner for the 6-hour default.
+        timeout-minutes: 30
 
         name: "PHP ${{ matrix.php }}, Sylius ${{ matrix.sylius }}, Symfony ${{ matrix.symfony }}"
 
@@ -54,7 +65,7 @@ jobs:
 
             -
                 name: Build Sylius Test Application
-                uses: SyliusLabs/BuildTestAppAction@v4
+                uses: SyliusLabs/BuildTestAppAction@fbdfc158a99f540fc3bbe554b46120d14444f2f4 # v4.3.0
                 with:
                     # The admin page the tests render includes the Webpack Encore entries:
                     # without a front-end build they answer 500 without saying why.
@@ -102,7 +113,7 @@ jobs:
     # required check counts as satisfied - the rule would let through exactly what it guards
     # against.
     build:
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-24.04
         name: "Build complete"
         needs: tests
         if: always()
