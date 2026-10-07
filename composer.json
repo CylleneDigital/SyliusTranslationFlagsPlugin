@@ -11,6 +11,18 @@
         "admin"
     ],
     "license": "MIT",
+    "homepage": "https://github.com/CylleneDigital/SyliusTranslationFlagsPlugin",
+    "authors": [
+        {
+            "name": "Cyllene",
+            "homepage": "https://github.com/CylleneDigital"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/CylleneDigital/SyliusTranslationFlagsPlugin/issues",
+        "source": "https://github.com/CylleneDigital/SyliusTranslationFlagsPlugin",
+        "security": "https://github.com/CylleneDigital/SyliusTranslationFlagsPlugin/security/policy"
+    },
     "require": {
         "php": "^8.3",
         "sylius/sylius": "~2.2.0 || ~2.3.0",
