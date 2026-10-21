@@ -20,7 +20,7 @@ the front-end build:
 
 ```bash
 composer install
-composer run test-app-init   # database, schema, fixtures, front-end build
+composer run test-app-init   # database, migrations, fixtures, front-end build
 ```
 
 The versioned `tests/TestApplication/.env` and `.env.test` carry a generic `DATABASE_URL`
