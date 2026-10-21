@@ -77,11 +77,15 @@ Sylius plugins, do not add personal rules to it.
   bundle class and its namespace, the overridden templates and their rendering, and the shared
   label host projects may override
   (`@CylleneDigitalSyliusTranslationFlagsPlugin/shared/locale_label.html.twig` and its
-  `locale_code` variable) - only breaks in a major version.
+  `locale_code` variable) - only breaks in a major version
+  ([why](docs/adr/0011-public-surface-breaks-only-in-a-major-version.md)).
+- **Decisions** are recorded in the [decision records](docs/adr/README.md): read the one a change
+  touches first. A pull request that takes a decision, or reverses one, adds a record - an accepted
+  record is superseded, not edited.
 - The codebase is written in **English**, comments and commit messages included.
 
 ## What does not belong here
 
 A host project's own template tweaks - a different flag size, a custom locale order, a shop
 override - stay in the project using them. This plugin carries the translations accordion and
-locales list overrides, nothing else.
+locales list overrides, nothing else ([why](docs/adr/0009-scope-limited-to-two-admin-screens.md)).
