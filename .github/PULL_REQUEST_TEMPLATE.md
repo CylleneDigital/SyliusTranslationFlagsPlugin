@@ -7,6 +7,7 @@
 - [ ] Tests pass (`vendor/bin/phpunit`)
 - [ ] PHPStan and ECS are green
 - [ ] `UPGRADE.md` is up to date if the public surface changes
+- [ ] A decision taken or reversed has its record in `docs/adr/`
 
 ## If the pull request overrides a new core template
 

@@ -115,6 +115,8 @@ untouched, and the plugin carries no configuration, no route, no table and no co
 
 [`CONTRIBUTING.md`](CONTRIBUTING.md) - setting up the test environment, standards, what has to pass.
 
+[Decision records](https://github.com/CylleneDigital/SyliusTranslationFlagsPlugin/blob/main/docs/adr/README.md) - why the plugin is built the way it is, one decision per file.
+
 A flaw is reported privately: [`SECURITY.md`](SECURITY.md). Do not open it as a public issue.
 
 ## Provenance and licence
