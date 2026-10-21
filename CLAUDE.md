@@ -51,16 +51,11 @@ The six QA checks are in [`CONTRIBUTING.md`](CONTRIBUTING.md). What it does not 
 Functional tests sync the schema via `SchemaTool::updateSchema` (no migrations to run before
 them); they insert the `en_US`/`fr_FR` locales and an admin in `fr_FR` if missing (idempotent).
 
-Sylius' migrations do nothing on MariaDB: each MySQL migration skips itself unless `isMySql()`
-(`is_a($platform, MySQLPlatform::class)`), and DBAL 4's `MariaDBPlatform` extends
-`AbstractMySQLPlatform`, not `MySQLPlatform` - `doctrine:migrations:migrate` reports
-"26 migrations executed, 0 sql queries" and leaves an empty schema. Hence:
-
-- `composer run database-reset` uses `doctrine:schema:create` (works on MariaDB);
-- the `Makefile` (`make database-init|database-reset`) keeps `doctrine:migrations:migrate`: it
-  targets the `mysql:8.4` service of `compose.yml`, where the migrations do run;
-- in CI, BuildTestAppAction's migrations leave the MariaDB schema empty, which is harmless: the
-  tests build their own schema.
+**Sylius 2.3.0 on MariaDB with DBAL 4** marks its migrations as executed but skips them
+(`AbstractMigration::isMySql()`, fixed in 2.3.1 by Sylius#19272): `doctrine:migrations:migrate`
+reports "26 migrations executed, 0 sql queries" and leaves an empty schema. Sylius 2.2 stays on
+DBAL 3. `composer run database-reset` and the `Makefile` both run the migrations: on Sylius 2.3,
+upgrade to 2.3.1 or later. The tests do not depend on it, since they build their own schema.
 
 ## Known pitfalls
 

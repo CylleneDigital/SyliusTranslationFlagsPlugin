@@ -78,7 +78,7 @@
         "database-reset": [
             "vendor/bin/console doctrine:database:drop --force --if-exists",
             "vendor/bin/console doctrine:database:create",
-            "vendor/bin/console doctrine:schema:create --force",
+            "vendor/bin/console doctrine:migrations:migrate -n",
             "vendor/bin/console sylius:fixtures:load -n"
         ],
         "frontend-clear": [
