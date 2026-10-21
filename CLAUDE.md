@@ -71,9 +71,10 @@ Sylius' migrations do nothing on MariaDB: each MySQL migration skips itself unle
   `sylius_twig_hooks` in the same config.
 - Sylius ships only 16 flagpack SVGs (`UiBundle/Resources/assets/icons/flagpack`); every other flag
   comes from the Iconify API at render time (`ux_icons.iconify.enabled`), cached in
-  `cache.system`. With `ignore_not_found: true`, an offline server renders no flag and no error
-  (documented in the README, "In production"). `ux:icons:import` is no workaround: it writes to
-  `assets/icons/`, but `LocalSvgIconRegistry::get()` only looks up a prefix that has an
+  `cache.system`. `ignore_not_found: true` only covers an `IconNotFoundException`: when the API is
+  unreachable, `Iconify` throws a `TransportException` nothing catches, and the page fails to
+  render (documented in the README, "In production"). `ux:icons:import` is no workaround: it writes
+  to `assets/icons/`, but `LocalSvgIconRegistry::get()` only looks up a prefix that has an
   `icon_sets` path (Sylius maps `flagpack` to its own directory) in that path.
 - The override's Twig namespace is written `SyliusAdmin` (without `@`) in the `addPath` call: with
   `@`, it is a separate namespace that never resolves.

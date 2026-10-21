@@ -82,10 +82,12 @@ Sylius ships 16 flagpack flags with its admin: `au`, `br`, `ca`, `cn`, `de`, `es
 `ch`…) is downloaded by Symfony UX Icons from the Iconify API (`https://api.iconify.design`) the
 first time it is rendered, then kept in the Symfony system cache until the next cache clear.
 
-Because Sylius sets `ux_icons.ignore_not_found: true`, a server that cannot reach that API
-renders those labels **without a flag and without an error**. If your servers have no outbound
-HTTPS access, allow `api.iconify.design`, or check that every locale you use has its flag among
-the 16 above.
+The `ux_icons.ignore_not_found: true` setting of Sylius only covers an icon the API does not
+know. A server that cannot reach the API **fails to render every page showing one of those
+labels** - the translations forms and the locales list - with an HTTP client exception, until the
+flag is in the cache - and a cache clear, at a deployment for instance, empties it. If your
+servers have no outbound HTTPS access, allow `api.iconify.design`, or check that every locale you
+use has its flag among the 16 above.
 
 `bin/console ux:icons:import flagpack:<code>` does not work around it: it writes into
 `assets/icons/`, while Sylius maps the `flagpack` prefix to its own directory - the only one
