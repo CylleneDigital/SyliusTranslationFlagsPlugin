@@ -6,13 +6,15 @@ Guide for coding agents working on this repository. It complements, without repe
   requirements
 - [`CONTRIBUTING.md`](CONTRIBUTING.md) - bringing up the environment, the six QA checks, PR
   conventions
+- [`docs/adr/`](docs/adr/README.md) - why the plugin is built the way it is, one decision per file
 
 This file only holds what reading the code will not tell you.
 
 The plugin targets Sylius `~2.2.0 || ~2.3.0`. Both overridden core templates are byte-for-byte
 identical between Sylius 2.2.8 and 2.3.0. The floor is 2.2 because the `flagpack` icon set only
 exists since then: on 2.1 no flag would render (`ignore_not_found: true`), and on 2.0 the
-accordion template is different and `ux_icon('flagpack:…')` throws an exception.
+accordion template is different and `ux_icon('flagpack:…')` throws an exception
+([0008](docs/adr/0008-sylius-floor-is-the-first-version-with-flagpack.md)).
 
 ## Where things live
 
@@ -70,7 +72,8 @@ upgrade to 2.3.1 or later. The tests do not depend on it, since they build their
   unreachable, `Iconify` throws a `TransportException` nothing catches, and the page fails to
   render (documented in the README, "In production"). `ux:icons:import` is no workaround: it writes
   to `assets/icons/`, but `LocalSvgIconRegistry::get()` only looks up a prefix that has an
-  `icon_sets` path (Sylius maps `flagpack` to its own directory) in that path.
+  `icon_sets` path (Sylius maps `flagpack` to its own directory) in that path
+  ([0006](docs/adr/0006-flags-from-the-sylius-flagpack-set.md)).
 - The override's Twig namespace is written `SyliusAdmin` (without `@`) in the `addPath` call: with
   `@`, it is a separate namespace that never resolves.
 - Tests run in debug (no `APP_DEBUG=0` in `phpunit.xml.dist`): the container rebuilds by itself
@@ -95,20 +98,23 @@ upgrade to 2.3.1 or later. The tests do not depend on it, since they build their
 - **The copies stay as close to the core as possible.** `translations.html.twig` differs from the
   core by one line; any new override renders the label through `locale_label.html.twig` rather than
   duplicating the flag markup, so that the next Sylius release can be followed with a plain diff
-  against `vendor/sylius/sylius/src/Sylius/Bundle/AdminBundle/templates/`.
+  against `vendor/sylius/sylius/src/Sylius/Bundle/AdminBundle/templates/`
+  ([0005](docs/adr/0005-one-shared-label-copies-one-line-from-the-core.md)).
 - **Host > plugin > core.** Never move the path registration to `twig.paths`, nor insert it before
-  the host's override directory: a host must always be able to take a template back.
+  the host's override directory: a host must always be able to take a template back
+  ([0002](docs/adr/0002-templates-path-registered-by-a-compiler-pass.md)).
 - **The pass fails loudly.** If the core's `@SyliusAdmin` directory cannot be found among the loader
-  calls, it throws a `LogicException`: never degrade to "no flags" silently.
+  calls, it throws a `LogicException`: never degrade to "no flags" silently
+  ([0003](docs/adr/0003-the-compiler-pass-fails-loudly.md)).
 - **No region, no flag.** `sylius_locale_country` (=`\Locale::getRegion`) returns `''` for a locale
-  without a region (`en`, `fr`…): the label then shows the name alone, as the core's country grid
-  does.
+  without a region (`en`, `fr`…): the label then shows the name alone
+  ([0007](docs/adr/0007-no-region-no-flag.md)).
 - The public surface - the bundle class and its namespace, the overridden templates and their
   rendering, the shared label and its `locale_code` variable - only breaks in a major version, with
-  an entry in `UPGRADE.md`.
+  an entry in `UPGRADE.md` ([0011](docs/adr/0011-public-surface-breaks-only-in-a-major-version.md)).
 
 ## What does not belong here
 
 A host project's own template tweaks - a different flag size, a custom locale order, a shop
 override - stay in the project using them. This plugin carries the translations accordion and
-locales list overrides, nothing else.
+locales list overrides, nothing else ([0009](docs/adr/0009-scope-limited-to-two-admin-screens.md)).
