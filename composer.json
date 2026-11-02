@@ -33,7 +33,7 @@
     },
     "require-dev": {
         "phpstan/phpstan": "^2.2",
-        "phpunit/phpunit": "^12.2",
+        "phpunit/phpunit": "^13.4",
         "sylius-labs/coding-standard": "^4.4",
         "sylius/test-application": "~2.2.0@alpha || ~2.3.0@alpha",
         "symfony/browser-kit": "^7.4 || ^8.0",
